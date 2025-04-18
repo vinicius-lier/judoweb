@@ -13,3 +13,51 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Class {
+  id          String   @id @default(uuid())
+  name        String
+  professor   String
+  daysOfWeek  String
+  schedule    String
+  minBelt     String
+  maxBelt     String
+  capacity    Int
+  description String?
+  academyId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  academy     Academy      @relation(fields: [academyId], references: [id])
+  attendances Attendance[]
+}
+
+model Student {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  birthDate DateTime
+  academyId String
+  unitId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  academy     Academy      @relation(fields: [academyId], references: [id])
+  unit        Unit         @relation(fields: [unitId], references: [id])
+  payments    Payment[]
+  attendances Attendance[]
+}
+
+model Attendance {
+  id        String   @id @default(uuid())
+  date      DateTime
+  present   Boolean
+  studentId String
+  classId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id])
+  class   Class   @relation(fields: [classId], references: [id])
+}
